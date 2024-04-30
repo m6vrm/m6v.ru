@@ -29,11 +29,10 @@
     <main>
         
 <style>
-@media only screen and (min-width: 768px) {
-    main { display: flex; }
-}
+main { display: flex; gap: 32px; }
+ul { list-style: none; padding: 0; }
 </style>
-<div style="flex: 50%;">
+<div style="flex: 50%; text-align: right;">
     <h2>Проекты</h2>
     <ul>
         <li>
@@ -49,8 +48,8 @@
 <div style="flex: 50%;">
     <h2>Заметки</h2>
     <ul>
-        <li><a href="/blog/2024-04-21.html">Formatting</a></li>
-<li><a href="/blog/2024-04-20.html">Lorem Ipsum</a></li>
+        <li><time><em>2024-04-21</em></time> – <a href="/blog/2024-04-21.html">Formatting</a></li>
+<li><time><em>2024-04-20</em></time> – <a href="/blog/2024-04-20.html">Lorem Ipsum</a></li>
 
     </ul>
 </div>
@@ -58,7 +57,7 @@
 
     </main>
     <footer>
-        <em><a href="/git">git</a></em> | tg: <em><a href="https://t.me/m6vrm">@m6vrm</a></em>
+        <em><a href="/git">git</a></em>. tg: <em><a href="https://t.me/m6vrm">@m6vrm</a></em>
         <img src="/images/vincent.png" class="vincent">
     </footer>
 </body>
