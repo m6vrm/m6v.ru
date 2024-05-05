@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="ru" dir="ltr">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>svart.nvim | m6v</title>
+    <meta name="description" content="">
+    <link rel="stylesheet" href="/css/main.css">
+</head>
+
+<body>
+    <header>
+        <a href="/index.html"><img src="/images/logo.svg" width="100"></a>
+        <nav>
+            <ul>
+                <li><a href="/projects/svart.nvim/index.html">Описание</a>.</li>
+<li><a href="/projects/svart.nvim/docs.html">Документация</a>.</li>
+<li><a href="/git/svart.nvim">Код</a>.</li>
+
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article>
+    <h1>svart.nvim</h1>
+    <div>
+        <h3>Конфигурация</h3>
+
+<figure>
+    <pre>
+local svart = require("svart")
+
+svart.configure({
+    -- бинды в режиме поиска
+    key_cancel = "&lt;Esc&gt;",       -- отмена поиска
+    key_delete_char = "&lt;BS&gt;",   -- удалить символ
+    key_delete_word = "&lt;C-W&gt;",  -- удалить слово
+    key_delete_query = "&lt;C-U&gt;", -- удалить весь запрос
+    key_best_match = "&lt;CR&gt;",    -- переход на текущую метку
+    key_next_match = "&lt;C-N&gt;",   -- выбрать следующую метку
+    key_prev_match = "&lt;C-P&gt;",   -- выбрать предыдущую метку
+
+    -- допустимые символы в метках
+    label_atoms = "jfkdlsahgnuvrbytmiceoxwpqz",
+
+    -- положение метки относительно совпадения
+    -- &gt;0: относительно начала совпадения
+    -- &lt;=0: относительно конца совпадения
+    label_location = -1,
+
+    -- максимальная длина метки
+    label_max_len = 2,
+
+    -- минимальная длина запроса
+    label_min_query_len = 1,
+
+    -- скрывать нерелевантные метки после начала ввода метки для перехода
+    label_hide_irrelevant = true,
+
+    -- количество символов от начала совпадения, которые нужно удалить из пула
+    -- мето для недопущения конфликтов при переходе
+    label_conflict_foresight = 2,
+
+    -- обновлять регистр поиска (/) после перехода на метку
+    search_update_register = true,
+
+    search_wrap_around = true,
+
+    -- поиск сразу в нескольких окнах
+    search_multi_window = true,
+
+    -- затемнение буфера при начале поиска
+    ui_dim_content = true,
+})
+    </pre>
+</figure>
+
+<h3>Цвета</h3>
+
+<p>Плагин использует следующие цветовые группы для подсветки:</p>
+
+<figure>
+    <pre>
+SvartDimmedContent = { default = true, link = "Comment" },
+SvartMatch = { default = true, link = "Search" },
+SvartMatchCursor = { default = true, link = "Cursor" },
+SvartDimmedCursor = { default = true, link = "TermCursorNC" },
+SvartLabel = { default = true, link = "IncSearch" },
+SvartPrompt = { default = true, link = "MoreMsg" },
+SvartErrorPrompt = { default = true, link = "ErrorMsg" },
+    </pre>
+</figure>
+
+    </div>
+</article>
+
+    </main>
+    <footer>
+        tg: <em><a href="https://t.me/m6vrm">@m6vrm</a></em>. <em><a href="/git">git</a></em>.
+    </footer>
+</body>
+
+</html>
