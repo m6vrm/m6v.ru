@@ -25,7 +25,20 @@
         <article>
     <h1>svart.nvim</h1>
     <div>
-        <h3>Конфигурация</h3>
+        <h3>Команды</h3>
+
+<figure>
+    <pre>
+-- начать поиск
+vim.keymap.set({ "n", "x", "o" }, "s", "&lt;Cmd&gt;Svart&lt;CR&gt;")
+-- начать поиск по регулярному выражению
+vim.keymap.set({ "n", "x", "o" }, "S", "&lt;Cmd&gt;SvartRegex&lt;CR&gt;")
+-- повторить предыдущий поиск
+vim.keymap.set({ "n", "x", "o" }, "gs", "&lt;Cmd&gt;SvartRepeat&lt;CR&gt;")
+    </pre>
+</figure>
+
+<h3>Конфигурация</h3>
 
 <figure>
     <pre>
@@ -78,7 +91,7 @@ svart.configure({
 
 <h3>Цвета</h3>
 
-<p>Плагин использует следующие цветовые группы для подсветки:</p>
+<p>Плагин использует следующие группы для подсветки:</p>
 
 <figure>
     <pre>
