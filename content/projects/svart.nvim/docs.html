@@ -1,7 +1,8 @@
 <h3>Команды</h3>
 
 <figure>
-    <pre>-- начать поиск
+    <pre>
+-- начать поиск
 vim.keymap.set({ "n", "x", "o" }, "s", "&lt;Cmd&gt;Svart&lt;CR&gt;")
 -- начать поиск по регулярному выражению
 vim.keymap.set({ "n", "x", "o" }, "S", "&lt;Cmd&gt;SvartRegex&lt;CR&gt;")
@@ -12,7 +13,8 @@ vim.keymap.set({ "n", "x", "o" }, "gs", "&lt;Cmd&gt;SvartRepeat&lt;CR&gt;")</pre
 <h3>Конфигурация</h3>
 
 <figure>
-    <pre>local svart = require("svart")
+    <pre>
+local svart = require("svart")
 
 svart.configure({
     -- бинды в режиме поиска
@@ -60,10 +62,12 @@ svart.configure({
 
 <h3>Цвета</h3>
 
-<p>Плагин использует следующие группы для подсветки:</p>
+<p>
+Плагин использует следующие группы для подсветки:</p>
 
 <figure>
-    <pre>SvartDimmedContent = { default = true, link = "Comment" },
+    <pre>
+SvartDimmedContent = { default = true, link = "Comment" },
 SvartMatch = { default = true, link = "Search" },
 SvartMatchCursor = { default = true, link = "Cursor" },
 SvartDimmedCursor = { default = true, link = "TermCursorNC" },
