@@ -1,3 +1,171 @@
 ---
 title = Настройка вeб-сервера и cgit на OpenBSD
 ---
+
+<p><a href="https://git.zx2c4.com/cgit/about/" target="_blank">cgit</a>
+– легковесный веб-интерфейс для репозиториев Git.</p>
+
+<p><a href="https://www.openbsd.org/" target="_blank">OpenBSD</a> – одна
+из немногих систем, позволяющая настроить практически любой сервер
+за минимальное количество шагов, и с минимальными изменениями конфигурации
+по умолчанию.</p>
+
+<h3>Установка</h3>
+
+<p>Веб-сервер является частью системы, так что установить потребуется только
+<code>cgit</code>:</p>
+
+<figure>
+    <pre># pkg_add cgit</pre>
+</figure>
+
+<p>Включаем веб-сервер и запускаем <code>slowcgi(8)</code>, который понадобится для
+<code>cgit</code> в дальнейшем:</p>
+
+<figure>
+    <pre># rcctl enable httpd
+# rcclt enable slowcgi
+# rcctl start slowcgi</pre>
+</figure>
+
+<h3>Настройка HTTPS</h3>
+
+<p>OpenBSD имеет <code>acme-client(1)</code>, позволяющий в автоматическом
+режиме получать и обновлять сертификаты.</p>
+
+<p>Редактируем <code>/etc/acme-client.conf</code>:</p>
+
+<figure>
+    <pre>authority letsencrypt {
+    api url "https://acme-v02.api.letsencrypt.org/directory"
+    account key "/etc/acme/letsencrypt-privkey.pem"
+}
+
+domain example.com {
+    alternative names { www.example.com }
+    domain key "/etc/ssl/private/example.com.key"
+    domain full chain certificate "/etc/ssl/example.com.fullchain.pem"
+    sign with letsencrypt
+}</pre>
+</figure>
+
+<p>Мы будем использовать центр сертификации
+<a href="https://letsencrypt.org/" target="_blank">Let's Encrypt</a>. Для
+получения сертификата, Let's Encrypt должен иметь возможность достучаться до
+нашего сервера.</p>
+
+<p>Редактируем конфигурацию веб-сервера <code>/etc/httpd.conf</code>:</p>
+
+<figure>
+    <pre>server "example.com" {
+    listen on * port 80
+    location "/.well-known/acme-challenge/*" {
+        root "/acme"
+        request strip 2
+    }
+    location * {
+        block return 302 "https://$HTTP_HOST$REQUEST_URI"
+    }
+}</pre>
+</figure>
+
+<p>Проверяем конфигурацию, перезапускаем веб-сервер и запрашиваем сертификаты:</p>
+
+<figure>
+    <pre># httpd -n && rcctl reload httpd
+# acme-client -v example.com
+  ...</pre>
+</figure>
+
+<p>Сертификаты действительны в течение 90 дней. Для их обновления добавляем
+ежедневное задание в <code>cron(8)</code>:</p>
+
+<figure>
+    <pre># crontab -e
+
+5   3   *   *   *   acme-client example.com && rcctl reload httpd</pre>
+</figure>
+
+<h3>Настройка веб-сервера</h3>
+
+<p>Снова редактируем <code>/etc/httpd.conf</code>. Добавляем обработчик
+HTTPS-запросов с полученными сертификатами, и роуты для <code>cgit</code>:</p>
+
+<figure>
+    <pre>server "example.com" {
+    listen on * tls port 443
+    root "/htdocs/example.com/public"
+    tls {
+        certificate "/etc/ssl/example.com.fullchain.pem"
+        key "/etc/ssl/private/example.com.key"
+    }
+    location "/.well-known/acme-challenge/*" {
+        root "/acme"
+        request strip 2
+    }
+    location "/git" { request rewrite "/git/" }
+    location "/git/*" {
+        root "/cgi-bin/cgit.cgi"
+        request strip 1
+        fastcgi socket "/run/slowcgi.sock"
+    }
+    location "/cgit/*" {
+        root "/cgit"
+        request strip 1
+    }
+}</pre>
+    <figcaption><code>cgit</code> будет доступен
+по <em>https://example.com/git</em></figcaption>
+</figure>
+
+<p>В OpenBSD веб-сервер запускается с <code>chroot(8)</code>
+в <code>/var/www</code>, поэтому статика должна лежать
+в <code><strong>/var/www</strong>/htdocs/example.com/public</code>. Группа
+<code>www</code> должна иметь доступ к данной директории.</p>
+
+<p>Еще раз перезапускаем веб-сервер:</p>
+
+<figure>
+    <pre># rcctl reload httpd</pre>
+</figure>
+
+<p>На этот раз сайт должен работать по HTTPS.</p>
+
+<h3>Настройка cgit</h3>
+
+<p>Редактируем конфигурацию <code>cgit</code>
+<code>/var/www/conf/cgitrc</code>:</p>
+
+<figure>
+    <pre>css=/cgit/cgit.css
+logo=/cgit/cgit.png
+virtual-root=/git
+
+cache-root=/cache/cgit
+cache-size=1000
+cache-static-ttl=15
+
+root-title=title
+root-desc=description
+
+snapshots=tar.gz zip
+
+remove-suffix=1
+enable-http-clone=1
+enable-index-owner=0
+
+scan-path=/git</pre>
+    <figcaption>Подробнее о настройках можно почитать
+в <code>cgitrc(5)</code></figcaption>
+</figure>
+
+<p>В данном случае <code>cgit</code> будет искать репозитории Git
+в <code><strong>/var/www</strong>/git</code> (настройка <code>scan-path</code>),
+и хранить кэш в <code><strong>/var/www</strong>/cache/cgit</code>. Группа
+<code>www</code> также должна иметь доступ к этим директориям.</p>
+
+<p>На время экспериментов кеширование можно выключить:
+<code>cache-size=0</code>.</p>
+
+<p>Перезапускать веб-сервер при изменении конфигурации <code>cgit</code>
+не требуется.</p>
