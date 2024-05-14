@@ -24,6 +24,49 @@
     <time><em>2022-10-13</em></time>
     <div>
         
+<p>
+Потребуются:</p>
+
+<ul>
+    <li>VirtualBox</li>
+    <li>Windows ISO</li>
+    <li>USB-диск как минимум на 32 ГБ</li>
+</ul>
+
+<h3>Шаг 1. Установка Windows на VirtualBox</h3>
+
+<ul>
+    <li>Размер диска – 30 ГБ</li>
+    <li>В настройках VM включаем EFI</li>
+</ul>
+
+<h3>Шаг 2. Конвертация образа VM</h3>
+
+<ul>
+    <li>Останавливаем VM после установки Winows</li>
+    <li>На хост-машине переходим в директорию VM Windows:
+        <pre>
+$ cd VirtualBox\ VMs/Windows</pre>
+    </li>
+    <li>Конвертируем образ VM с помощью <code>vboxmanage</code>:
+        <pre>
+$ vboxmanage clonehd Windows.vdi Windows.img --format RAW</pre>
+    </li>
+</ul>
+
+<h3>Шаг 3. Запись образа на USB-диск</h3>
+
+<ul>
+    <li>Находим целевой диск с помоью <code>lsblk</code></li>
+    <li>Записываем образ на USB-диск:
+        <pre>
+$ sudo dd if=Windows.img of=/dev/<strong>{disk}</strong> bs=4M status=progress
+$ sync</pre>
+    </li>
+</ul>
+
+<p>После записи USB-диск можно выбирать как загрузочный в UEFI.</p>
+
     </div>
 </article>
 
