@@ -57,7 +57,7 @@ $ vboxmanage clonehd Windows.vdi Windows.img --format RAW</pre>
 <h3>Шаг 3. Запись образа на USB-диск</h3>
 
 <ul>
-    <li>Находим целевой диск с помоью <code>lsblk</code></li>
+    <li>Находим целевой диск с помощью <code>lsblk</code></li>
     <li>Записываем образ на USB-диск:
         <pre>
 $ sudo dd if=Windows.img of=/dev/<strong>{disk}</strong> bs=4M status=progress
